@@ -1,0 +1,76 @@
+<div class="container text-center bg-warning p-5 mt-5">
+    <div class="row">
+        <div class="col-12">
+            <h3 class="text-danger">EAT DA BURGA</h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-6 notEaten">
+            {{#each burgers}}
+            {{#unless devoured}}
+            <div class="card p-3 m-2 shadow-sm">
+                {{this.burger_name}}
+                <button class="btn btn-primary devourButton" data-target={{this.id}}> Devour Me</button>
+            </div>
+            {{/unless}}
+            {{/each}}
+        </div>
+        <div class="col-6 devoured">
+            {{#each burgers}}
+            {{#if devoured}}
+            <div class="card p-3 m-2 shadow-sm">
+                {{this.burger_name}}
+                <button class="btn btn-primary deleteButton" data-target={{this.id}}> Delete Me</button>
+            </div>
+            {{/if}}
+            {{/each}}
+        </div>
+    </div>
+    <div class="row mt-5">
+        <div class="col-12">
+            <form>
+                <div class="form-group">
+                    <label for="burgerInput">
+                        <h5>Add a New Burger</h5>
+                    </label>
+                    <input type="text" class="form-control" id="burgerInput" placeholder="Enter Burger Name">
+                </div>
+                <button type="submit" class="btn btn-primary submitButton">Add Burger</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    $(function () {
+        $(".devourButton").on('click', function () {
+            $.ajax({
+                url: "/devour/" + $(this).attr('data-target'),
+                type: "PUT"
+            }).then(function (response) {
+                location.reload()
+            })
+        });
+
+        $(".deleteButton").on('click', function () {
+            $.ajax({
+                url: "/delete/" + $(this).attr('data-target'),
+                type: "DELETE"
+            }).then(function (response) {
+                location.reload()
+            })
+        });
+        $(".submitButton").on('click', function () {
+            var newBurger = {
+                burger_name: $("#burgerInput").val().trim(),
+                devoured: 0
+            };
+            event.preventDefault()
+            $.post('/', newBurger, function (response) {
+                location.reload()
+            })
+        });
+
+    })
+</script>
